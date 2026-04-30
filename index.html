@@ -4,92 +4,63 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Voucher — Web Solution</title>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0f0f14;
-  --ink2:#444450;
-  --ink3:#888899;
-  --surface:#ffffff;
-  --surface2:#f7f7f9;
-  --surface3:#f0f0f4;
-  --border:#e2e2ea;
-  --border2:#c8c8d8;
-  --accent:#1a1a2e;
-  --accent2:#2d2d4e;
+  --ink:#0f0f14;--ink2:#444450;--ink3:#888899;
+  --surface:#ffffff;--surface2:#f7f7f9;--surface3:#f0f0f4;
+  --border:#e2e2ea;--border2:#c8c8d8;
+  --accent:#1a1a2e;--accent2:#2d2d4e;
   --green-bg:#eaf3de;--green-txt:#3B6D11;--green-bd:#97C459;
   --amber-bg:#faeeda;--amber-txt:#854F0B;--amber-bd:#EF9F27;
   --blue-bg:#e6f1fb;--blue-txt:#0C447C;--blue-bd:#85B7EB;
   --radius:10px;--radius-lg:14px;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--ink);min-height:100vh;padding:2rem 1rem}
-
-/* AUTH SCREEN */
-#auth-screen{display:flex;align-items:center;justify-content:center;min-height:80vh}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:3rem 2.5rem;text-align:center;max-width:400px;width:100%}
-.auth-logo{width:52px;height:52px;background:var(--accent);border-radius:12px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center}
-.auth-logo svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
-.auth-card h1{font-size:20px;font-weight:600;margin-bottom:.5rem}
-.auth-card p{font-size:13px;color:var(--ink3);margin-bottom:2rem;line-height:1.6}
-.btn-google{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .15s}
-.btn-google:hover{background:var(--surface2);border-color:var(--ink3)}
-.btn-google svg{width:18px;height:18px}
-
-/* MAIN APP */
-#app{display:none;max-width:1140px;margin:0 auto}
+.app{max-width:1140px;margin:0 auto}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
 .topbar-brand{display:flex;align-items:center;gap:10px}
 .topbar-logo{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .topbar-logo svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
 .topbar-title{font-size:15px;font-weight:600;letter-spacing:.02em}
 .topbar-sub{font-size:11px;color:var(--ink3)}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.user-pill{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--ink2)}
-.user-dot{width:8px;height:8px;border-radius:50%;background:#97C459}
-
+.sync-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3)}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green-bd);flex-shrink:0}
+.sync-dot.loading{background:var(--amber-bd);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .layout{display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start}
-
-/* CARD */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
 .card-head{background:var(--accent);padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center}
 .card-head-left .title{color:#fff;font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
 .card-head-left .sub{color:rgba(255,255,255,.4);font-size:11px;margin-top:2px}
 .folio-badge .lbl{color:rgba(255,255,255,.4);font-size:10px;text-align:right;letter-spacing:.06em;text-transform:uppercase}
 .folio-badge .val{color:#fff;font-size:15px;font-weight:600;font-family:'DM Mono',monospace;text-align:right}
-
 .card-body{padding:1.4rem}
 .sec-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
 .divider{border:none;border-top:1px solid var(--surface3);margin:1.2rem 0}
-
 .row{display:grid;gap:10px;margin-bottom:10px}
 .col-2{grid-template-columns:1fr 1fr}
 .col-3{grid-template-columns:1fr 1fr 1fr}
 .col-1{grid-template-columns:1fr}
-
 label{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
 input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--ink);background:var(--surface2);outline:none;transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,26,46,.08);background:var(--surface)}
 input[readonly]{background:var(--surface3);cursor:default;color:var(--ink3);font-family:'DM Mono',monospace}
 textarea{resize:none;line-height:1.5}
-
 .amount-box{background:var(--surface2);border-radius:var(--radius);padding:.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border:1px solid var(--border)}
 .amount-lbl{font-size:12px;color:var(--ink3);font-weight:500}
 .amount-val{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;color:var(--ink)}
-
 .status-row{display:flex;gap:8px;margin-bottom:12px}
 .sbtn{flex:1;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--ink3)}
 .sbtn:hover{border-color:var(--ink3)}
 .sbtn.s-pagado{background:var(--green-bg);border-color:var(--green-bd);color:var(--green-txt)}
 .sbtn.s-pendiente{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber-txt)}
 .sbtn.s-parcial{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue-txt)}
-
 .ref-block{overflow:hidden;transition:max-height .25s,opacity .2s}
 .ref-block.hidden{max-height:0;opacity:0;pointer-events:none}
 .ref-block.visible{max-height:200px;opacity:1}
-
 .card-foot{border-top:1px solid var(--surface3);padding:1rem 1.4rem;display:flex;justify-content:flex-end;gap:8px}
 .btn{padding:9px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;border:1px solid transparent}
 .btn-outline{background:var(--surface);border-color:var(--border2);color:var(--ink2)}
@@ -97,14 +68,12 @@ textarea{resize:none;line-height:1.5}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-primary:hover{background:var(--accent2)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-
-/* SIDEBAR */
 .sidebar{display:flex;flex-direction:column;gap:1rem}
 .hist-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
 .hist-head{background:var(--accent);padding:.9rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
 .hist-head-title{color:#fff;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
 .hist-count{background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
-.hist-list{max-height:420px;overflow-y:auto}
+.hist-list{max-height:440px;overflow-y:auto}
 .hist-item{padding:.8rem 1.1rem;border-bottom:1px solid var(--surface3);cursor:pointer;transition:background .12s}
 .hist-item:hover{background:var(--surface2)}
 .hist-item:last-child{border-bottom:none}
@@ -118,47 +87,23 @@ textarea{resize:none;line-height:1.5}
 .hs-pendiente{background:var(--amber-bg);color:var(--amber-txt)}
 .hs-parcial{background:var(--blue-bg);color:var(--blue-txt)}
 .hist-empty{padding:2rem;text-align:center;color:var(--ink3);font-size:13px}
-.hist-loading{padding:1.5rem;text-align:center;color:var(--ink3);font-size:12px}
-
 .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:.9rem;border-top:1px solid var(--surface3)}
 .stat-box{background:var(--surface2);border-radius:8px;padding:.65rem .9rem}
 .stat-num{font-size:17px;font-weight:700;color:var(--ink);font-family:'DM Mono',monospace}
 .stat-lbl{font-size:10px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
-
-/* TOAST */
+.sheet-link{display:flex;align-items:center;gap:6px;padding:.65rem 1rem;background:var(--green-bg);border:1px solid var(--green-bd);border-radius:var(--radius);font-size:12px;color:var(--green-txt);font-weight:500;text-decoration:none;transition:opacity .15s}
+.sheet-link:hover{opacity:.8}
+.sheet-link svg{width:14px;height:14px;flex-shrink:0}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:10px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{background:#3B6D11}
 .toast.err{background:#A32D2D}
 .toast.info{background:var(--accent)}
-
-/* SHEET LINK */
-.sheet-link{display:flex;align-items:center;gap:6px;padding:.65rem 1rem;background:var(--green-bg);border:1px solid var(--green-bd);border-radius:var(--radius);font-size:12px;color:var(--green-txt);font-weight:500;text-decoration:none;transition:opacity .15s}
-.sheet-link:hover{opacity:.8}
-.sheet-link svg{width:14px;height:14px;flex-shrink:0}
-
 @media(max-width:740px){.layout{grid-template-columns:1fr}.col-3{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-
-<!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    </div>
-    <h1>Voucher — Web Solution</h1>
-    <p>Inicia sesión con tu cuenta Google para acceder al generador de vouchers conectado a Google Sheets.</p>
-    <button class="btn-google" onclick="iniciarAuth()">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      Iniciar sesión con Google
-    </button>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app">
+<div class="app">
   <div class="topbar">
     <div class="topbar-brand">
       <div class="topbar-logo">
@@ -169,26 +114,24 @@ textarea{resize:none;line-height:1.5}
         <div class="topbar-sub">Web Solution</div>
       </div>
     </div>
-    <div class="topbar-right">
-      <div class="user-pill"><div class="user-dot"></div><span id="user-name">—</span></div>
-      <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" onclick="cerrarSesion()">Salir</button>
+    <div class="sync-status">
+      <div class="sync-dot loading" id="sync-dot"></div>
+      <span id="sync-txt">Conectando…</span>
     </div>
   </div>
 
   <div class="layout">
-    <!-- FORMULARIO -->
     <div class="card">
       <div class="card-head">
         <div class="card-head-left">
           <div class="title">Comprobante de Pago</div>
-          <div class="sub">Servicios de automatización</div>
+          <div class="sub">Servicios de automatización · Web Solution</div>
         </div>
         <div class="folio-badge">
           <div class="lbl">Folio</div>
           <div class="val" id="folio-display">VCH-···</div>
         </div>
       </div>
-
       <div class="card-body">
         <div class="sec-lbl">Información general</div>
         <div class="row col-3">
@@ -196,7 +139,6 @@ textarea{resize:none;line-height:1.5}
           <div><label>Hora</label><input type="time" id="hora"/></div>
           <div><label>Folio</label><input type="text" id="folio" readonly/></div>
         </div>
-
         <hr class="divider"/>
         <div class="sec-lbl">Datos del cliente</div>
         <div class="row col-2">
@@ -206,7 +148,6 @@ textarea{resize:none;line-height:1.5}
         <div class="row col-1">
           <div><label>Concepto</label><textarea id="concepto" rows="2" placeholder="Ej. Visita de soporte técnico #2 — mayo 2025"></textarea></div>
         </div>
-
         <hr class="divider"/>
         <div class="sec-lbl">Pago</div>
         <div class="amount-box">
@@ -235,7 +176,6 @@ textarea{resize:none;line-height:1.5}
             <div><label>Banco / plataforma</label><input type="text" id="banco" placeholder="Ej. BBVA, SPEI, Clip…"/></div>
           </div>
         </div>
-
         <hr class="divider"/>
         <div class="sec-lbl">Estado del pago</div>
         <div class="status-row">
@@ -247,27 +187,24 @@ textarea{resize:none;line-height:1.5}
           <div><label>Notas adicionales</label><textarea id="notas" rows="2" placeholder="Observaciones, próxima visita, etc."></textarea></div>
         </div>
       </div>
-
       <div class="card-foot">
         <button class="btn btn-outline" onclick="limpiar()">Nuevo voucher</button>
         <button class="btn btn-primary" id="btn-guardar" onclick="guardarYPDF()">Guardar y generar PDF</button>
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1xbxumWvE584oZ1P7M6Jyb2Zb7zyaSvD7awNiuoOR5Jk/edit" target="_blank">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
         Ver Google Sheet completo
       </a>
-
       <div class="hist-card">
         <div class="hist-head">
           <span class="hist-head-title">Historial reciente</span>
           <span class="hist-count" id="hist-count">—</span>
         </div>
         <div class="hist-list" id="hist-list">
-          <div class="hist-loading">Cargando desde Sheets…</div>
+          <div class="hist-empty">Cargando…</div>
         </div>
         <div class="stats-row" id="stats-row" style="display:none">
           <div class="stat-box"><div class="stat-num" id="stat-total">$0</div><div class="stat-lbl">Total cobrado</div></div>
@@ -277,186 +214,150 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-const CLIENT_ID = '943816271694-686b8eo2p5hobo331alngss6f11fvfkc.apps.googleusercontent.com';
+const API_KEY   = 'AIzaSyDt47pb4fmE9gjwrF8ZsxOHvrfXUww1ZdM';
 const SHEET_ID  = '1xbxumWvE584oZ1P7M6Jyb2Zb7zyaSvD7awNiuoOR5Jk';
-const SHEET_NAME = 'Vouchers';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+const TAB       = 'Vouchers';
+const BASE      = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
 const { jsPDF } = window.jspdf;
 
-let tokenClient, accessToken = null, statusActual = 'pagado', totalActual = 0;
+let statusActual = 'pagado';
+let totalActual  = 0;
 
-// ── AUTH ──────────────────────────────────────────────────────────
 window.onload = () => {
   const now = new Date();
   document.getElementById('fecha').value = now.toISOString().split('T')[0];
-  document.getElementById('hora').value = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-
-  const saved = sessionStorage.getItem('gs_token');
-  if (saved) { accessToken = saved; mostrarApp(); return; }
-
-  google.accounts.id.initialize({ client_id: CLIENT_ID, callback: () => {} });
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: (resp) => {
-      if (resp.error) { toast('Error de autenticación: '+resp.error,'err'); return; }
-      accessToken = resp.access_token;
-      sessionStorage.setItem('gs_token', accessToken);
-      const info = parseJwt(resp.access_token);
-      document.getElementById('user-name').textContent = info?.email || 'Usuario';
-      mostrarApp();
-    }
-  });
+  document.getElementById('hora').value  = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  cargarHistorial();
 };
 
-function parseJwt(token) {
-  try { return JSON.parse(atob(token.split('.')[1])); } catch { return null; }
-}
-
-function iniciarAuth() {
-  if (!tokenClient) { toast('Cargando API de Google…','info'); setTimeout(iniciarAuth,1200); return; }
-  tokenClient.requestAccessToken({ prompt: 'select_account' });
-}
-
-function cerrarSesion() {
-  sessionStorage.removeItem('gs_token');
-  accessToken = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-}
-
-function mostrarApp() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  cargarHistorial();
-}
-
-// ── SHEETS API ────────────────────────────────────────────────────
+// ── SHEETS ───────────────────────────────────────────────────────
 async function sheetsGet(range) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`;
-  const r = await fetch(url, { headers: { Authorization: 'Bearer '+accessToken } });
-  if (!r.ok) throw new Error('Sheets GET error '+r.status);
+  const r = await fetch(`${BASE}/${encodeURIComponent(range)}?key=${API_KEY}`);
+  if (!r.ok) { const e=await r.json(); throw new Error(e.error?.message||'Error Sheets'); }
   return r.json();
 }
 
 async function sheetsAppend(values) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `${BASE}/${encodeURIComponent(TAB)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS&key=${API_KEY}`;
   const r = await fetch(url, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer '+accessToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values })
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({values})
   });
-  if (!r.ok) throw new Error('Sheets APPEND error '+r.status);
+  if (!r.ok) { const e=await r.json(); throw new Error(e.error?.message||'Error escribiendo'); }
   return r.json();
 }
 
-// ── FOLIO ─────────────────────────────────────────────────────────
-async function getSiguienteFolio() {
-  try {
-    const data = await sheetsGet(`${SHEET_NAME}!A:A`);
-    const rows = data.values || [];
-    const count = rows.filter(r => r[0] && r[0].startsWith('VCH-')).length;
-    return String(count + 1).padStart(3,'0');
-  } catch { return '001'; }
-}
-
-// ── HISTORIAL ─────────────────────────────────────────────────────
+// ── HISTORIAL ────────────────────────────────────────────────────
 async function cargarHistorial() {
+  setSyncState('loading');
   try {
-    const data = await sheetsGet(`${SHEET_NAME}!A:O`);
-    const rows = (data.values || []).filter(r => r[0] && r[0].startsWith('VCH-'));
-    renderHistorial(rows.reverse().slice(0, 30));
+    const data = await sheetsGet(`${TAB}!A:O`);
+    const rows = (data.values||[]).filter(r=>r[0]&&r[0].startsWith('VCH-'));
+    renderHistorial([...rows].reverse().slice(0,30));
     actualizarStats(rows);
-    // Pre-cargar folio siguiente
-    const sig = String(rows.length + 1).padStart(3,'0');
+    const sig = String(rows.length+1).padStart(3,'0');
     document.getElementById('folio').value = sig;
     document.getElementById('folio-display').textContent = 'VCH-'+sig;
+    setSyncState('ok');
   } catch(e) {
-    document.getElementById('hist-list').innerHTML = '<div class="hist-empty">Error al cargar. Verifica permisos.</div>';
+    document.getElementById('hist-list').innerHTML = `<div class="hist-empty">Error: ${e.message}</div>`;
+    setSyncState('err');
   }
 }
 
 function renderHistorial(rows) {
   const list = document.getElementById('hist-list');
-  if (!rows.length) { list.innerHTML = '<div class="hist-empty">Sin vouchers aún</div>'; return; }
+  if (!rows.length) { list.innerHTML='<div class="hist-empty">Sin vouchers aún</div>'; return; }
   list.innerHTML = rows.map(r => {
-    const [folio,,fecha,hora,cliente,,,,total,,,, estado] = r;
-    const st = (estado||'pagado').toLowerCase();
-    return `<div class="hist-item" onclick="reimprimirDesdeRow(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+    const st = (r[12]||'pagado').toLowerCase();
+    return `<div class="hist-item" onclick="reimprimir(this)" data-row='${JSON.stringify(r).replace(/'/g,"&#39;")}'>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="hist-folio">${folio||'—'}</span>
+        <span class="hist-folio">${r[0]||'—'}</span>
         <span class="hist-status hs-${st}">${st}</span>
       </div>
-      <div class="hist-cliente">${cliente||'—'}</div>
+      <div class="hist-cliente">${r[3]||'—'}</div>
       <div class="hist-meta">
-        <span class="hist-monto">$${parseFloat(total||0).toFixed(2)}</span>
-        <span class="hist-fecha">${fecha||''}</span>
+        <span class="hist-monto">$${parseFloat(r[8]||0).toFixed(2)}</span>
+        <span class="hist-fecha">${r[1]||''}</span>
       </div>
     </div>`;
   }).join('');
 }
 
 function actualizarStats(rows) {
-  const total = rows.reduce((s,r) => s + parseFloat(r[8]||0), 0);
+  const total = rows.reduce((s,r)=>s+parseFloat(r[8]||0),0);
   document.getElementById('stat-total').textContent = '$'+total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
   document.getElementById('stat-count').textContent = rows.length;
   document.getElementById('hist-count').textContent = rows.length;
   document.getElementById('stats-row').style.display = 'grid';
 }
 
-// ── FORM ──────────────────────────────────────────────────────────
+function setSyncState(state) {
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-txt');
+  dot.className='sync-dot';
+  if(state==='loading'){dot.classList.add('loading');txt.textContent='Sincronizando…';}
+  else if(state==='ok'){dot.style.background='var(--green-bd)';txt.textContent='Conectado a Sheets';}
+  else{dot.style.background='#E24B4A';txt.textContent='Error de conexión';}
+}
+
+// ── FORM ─────────────────────────────────────────────────────────
 function calcMonto() {
-  const v = parseFloat(document.getElementById('monto').value);
-  if (isNaN(v)) { document.getElementById('amount-display').textContent = '$ —'; totalActual = 0; return; }
-  totalActual = document.getElementById('iva').value === 'si' ? v * 1.16 : v;
-  document.getElementById('amount-display').textContent = '$ '+totalActual.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  const v=parseFloat(document.getElementById('monto').value);
+  if(isNaN(v)){document.getElementById('amount-display').textContent='$ —';totalActual=0;return;}
+  totalActual = document.getElementById('iva').value==='si' ? v*1.16 : v;
+  document.getElementById('amount-display').textContent='$ '+totalActual.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
 }
 
 function toggleRef() {
-  const m = document.getElementById('metodo').value;
-  const b = document.getElementById('ref-block');
-  if (m==='Transferencia'||m==='Tarjeta') { b.classList.remove('hidden'); b.classList.add('visible'); }
-  else { b.classList.remove('visible'); b.classList.add('hidden'); }
+  const m=document.getElementById('metodo').value;
+  const b=document.getElementById('ref-block');
+  if(m==='Transferencia'||m==='Tarjeta'){b.classList.remove('hidden');b.classList.add('visible');}
+  else{b.classList.remove('visible');b.classList.add('hidden');}
 }
 
 function setStatus(s) {
-  statusActual = s;
-  ['pagado','pendiente','parcial'].forEach(k => {
-    const btn = document.getElementById('btn-'+k);
-    btn.className = 'sbtn';
-    if (k===s) btn.classList.add('s-'+k);
+  statusActual=s;
+  ['pagado','pendiente','parcial'].forEach(k=>{
+    const btn=document.getElementById('btn-'+k);
+    btn.className='sbtn';
+    if(k===s)btn.classList.add('s-'+k);
   });
 }
 
 function limpiar() {
-  ['cliente','contacto','concepto','monto','referencia','banco','notas'].forEach(id => document.getElementById(id).value='');
+  ['cliente','contacto','concepto','monto','referencia','banco','notas'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('iva').value='no';
   document.getElementById('metodo').value='Efectivo';
   document.getElementById('amount-display').textContent='$ —';
-  toggleRef(); setStatus('pagado');
-  const now = new Date();
-  document.getElementById('fecha').value = now.toISOString().split('T')[0];
-  document.getElementById('hora').value = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  totalActual=0; toggleRef(); setStatus('pagado');
+  const now=new Date();
+  document.getElementById('fecha').value=now.toISOString().split('T')[0];
+  document.getElementById('hora').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   cargarHistorial();
 }
 
-// ── GUARDAR ───────────────────────────────────────────────────────
+// ── GUARDAR ──────────────────────────────────────────────────────
 async function guardarYPDF() {
-  const cliente = document.getElementById('cliente').value.trim();
-  const monto   = parseFloat(document.getElementById('monto').value);
-  if (!cliente) { toast('Ingresa el nombre del cliente','err'); return; }
-  if (isNaN(monto)||monto<=0) { toast('Ingresa un monto válido','err'); return; }
+  const cliente=document.getElementById('cliente').value.trim();
+  const monto=parseFloat(document.getElementById('monto').value);
+  if(!cliente){toast('Ingresa el nombre del cliente','err');return;}
+  if(isNaN(monto)||monto<=0){toast('Ingresa un monto válido','err');return;}
 
-  const btn = document.getElementById('btn-guardar');
-  btn.disabled = true; btn.textContent = 'Guardando…';
+  const btn=document.getElementById('btn-guardar');
+  btn.disabled=true; btn.textContent='Guardando…';
 
   try {
-    const folioNum = await getSiguienteFolio();
+    // Obtener folio actualizado justo antes de guardar
+    const dataF = await sheetsGet(`${TAB}!A:A`);
+    const count  = (dataF.values||[]).filter(r=>r[0]&&r[0].startsWith('VCH-')).length;
+    const folioNum = String(count+1).padStart(3,'0');
     const folioStr = 'VCH-'+folioNum;
+
     const fecha    = document.getElementById('fecha').value;
     const hora     = document.getElementById('hora').value;
     const contacto = document.getElementById('contacto').value.trim();
@@ -467,110 +368,113 @@ async function guardarYPDF() {
     const banco    = document.getElementById('banco').value.trim();
     const notas    = document.getElementById('notas').value.trim();
     const total    = totalActual.toFixed(2);
-    const ts       = new Date().toISOString();
+    const ts       = new Date().toLocaleString('es-MX');
 
     const row = [folioStr, fecha, hora, cliente, contacto, concepto,
                  monto.toFixed(2), ivaVal==='si'?'16%':'0%', total,
                  metodo, ref, banco, statusActual, notas, ts];
 
     await sheetsAppend([row]);
-    toast('Voucher guardado en Sheets ✓','ok');
+    toast('Guardado en Sheets ✓','ok');
 
-    const datos = { folio:folioNum, fecha, hora, cliente, contacto, concepto,
-                    monto:monto.toFixed(2), iva:ivaVal, total, metodo,
-                    referencia:ref, banco, status:statusActual, notas };
-    generarPDF(datos);
+    generarPDF({folio:folioNum, fecha, hora, cliente, contacto, concepto,
+                monto:monto.toFixed(2), iva:ivaVal, total, metodo,
+                referencia:ref, banco, status:statusActual, notas});
     await cargarHistorial();
   } catch(e) {
-    toast('Error al guardar: '+e.message,'err');
+    toast('Error: '+e.message,'err');
+    console.error(e);
   } finally {
-    btn.disabled = false; btn.textContent = 'Guardar y generar PDF';
+    btn.disabled=false; btn.textContent='Guardar y generar PDF';
   }
 }
 
-// ── PDF ───────────────────────────────────────────────────────────
-function reimprimirDesdeRow(r) {
-  if (!Array.isArray(r)) { try { r = JSON.parse(r); } catch { return; } }
-  const [folio, fecha, hora, cliente, contacto, concepto, monto, iva, total, metodo, ref, banco, estado, notas] = r;
-  generarPDF({ folio:(folio||'').replace('VCH-',''), fecha, hora, cliente, contacto, concepto,
-               monto, iva: iva==='16%'?'si':'no', total, metodo, referencia:ref, banco, status:estado, notas });
+// ── REIMPRIMIR ───────────────────────────────────────────────────
+function reimprimir(el) {
+  const r = JSON.parse(el.dataset.row);
+  generarPDF({
+    folio:(r[0]||'').replace('VCH-',''), fecha:r[1], hora:r[2],
+    cliente:r[3], contacto:r[4], concepto:r[5],
+    monto:r[6], iva:r[7]==='16%'?'si':'no', total:r[8],
+    metodo:r[9], referencia:r[10], banco:r[11], status:r[12], notas:r[13]
+  });
 }
 
+// ── PDF ──────────────────────────────────────────────────────────
 function generarPDF(d) {
-  const doc = new jsPDF({ unit:'mm', format:'a5', orientation:'portrait' });
-  const W=148, H=210;
-  const azul=[26,26,46], gris=[247,247,249], grisT=[120,120,130];
+  const doc=new jsPDF({unit:'mm',format:'a5',orientation:'portrait'});
+  const W=148,H=210,azul=[26,26,46],gris=[247,247,249],grisT=[120,120,130];
 
-  doc.setFillColor(...azul); doc.rect(0,0,W,32,'F');
-  doc.setTextColor(255,255,255); doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.setFillColor(...azul);doc.rect(0,0,W,32,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(11);doc.setFont('helvetica','bold');
   doc.text('COMPROBANTE DE PAGO',12,13);
-  doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.setTextColor(180,180,200); doc.text('Servicios de automatización',12,19);
-  doc.setTextColor(180,180,200); doc.setFontSize(8); doc.text('Folio',W-12,11,{align:'right'});
-  doc.setTextColor(255,255,255); doc.setFontSize(12); doc.setFont('helvetica','bold');
-  doc.text('VCH-'+(d.folio||'—'),W-12,19,{align:'right'});
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.setTextColor(180,180,200);doc.text('Web Solution · Servicios de automatización',12,20);
+  doc.setFontSize(8);doc.text('Folio',W-12,11,{align:'right'});
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('VCH-'+(d.folio||'—'),W-12,20,{align:'right'});
 
   let y=40;
   const lbl=(t,x,yy)=>{doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...grisT);doc.text(t.toUpperCase(),x,yy)};
-  const val=(t,x,yy,bold=false)=>{doc.setFontSize(9);doc.setFont('helvetica',bold?'bold':'normal');doc.setTextColor(26,26,46);doc.text(t||'—',x,yy)};
-  const hr=(yy)=>{doc.setDrawColor(230,228,220);doc.setLineWidth(.3);doc.line(12,yy,W-12,yy)};
+  const val=(t,x,yy,bold=false)=>{doc.setFontSize(9);doc.setFont('helvetica',bold?'bold':'normal');doc.setTextColor(26,26,46);doc.text(String(t||'—'),x,yy)};
+  const hr=(yy)=>{doc.setDrawColor(228,228,234);doc.setLineWidth(.3);doc.line(12,yy,W-12,yy)};
 
-  lbl('Fecha',12,y); lbl('Hora',60,y); lbl('Método de pago',100,y);
-  val(d.fecha||'',12,y+5); val(d.hora||'',60,y+5); val(d.metodo||'',100,y+5);
-  y+=13; hr(y); y+=7;
+  lbl('Fecha',12,y);lbl('Hora',60,y);lbl('Método de pago',100,y);
+  val(d.fecha,12,y+5);val(d.hora,60,y+5);val(d.metodo,100,y+5);
+  y+=13;hr(y);y+=7;
 
-  lbl('Cliente',12,y);
-  val(d.cliente||'',12,y+5,true);
+  lbl('Cliente',12,y);val(d.cliente,12,y+5,true);
   if(d.contacto){lbl('Contacto',85,y);val(d.contacto,85,y+5);}
-  y+=13; hr(y); y+=7;
+  y+=13;hr(y);y+=7;
 
-  lbl('Concepto',12,y); y+=5;
+  lbl('Concepto / Motivo de pago',12,y);y+=5;
   doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(26,26,46);
   const lines=doc.splitTextToSize(d.concepto||'—',W-24);
-  doc.text(lines,12,y); y+=lines.length*5+4; hr(y); y+=7;
+  doc.text(lines,12,y);y+=lines.length*5+4;hr(y);y+=7;
 
-  doc.setFillColor(...gris); doc.roundedRect(12,y,W-24,22,3,3,'F');
-  lbl('Monto base',18,y+6); lbl('IVA',75,y+6); lbl('Total',105,y+6);
-  val('$'+(d.monto||'0')+' MXN',18,y+14); val(d.iva==='si'?'16%':'N/A',75,y+14);
+  doc.setFillColor(...gris);doc.roundedRect(12,y,W-24,22,3,3,'F');
+  lbl('Monto base',18,y+6);lbl('IVA',75,y+6);lbl('Total cobrado',105,y+6);
+  val('$'+(d.monto||'0')+' MXN',18,y+14);
+  val(d.iva==='si'?'16%':'N/A',75,y+14);
   doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(26,26,46);
   doc.text('$'+(d.total||'0')+' MXN',105,y+15);
   y+=28;
 
   if(d.referencia||d.banco){
-    lbl('N° de referencia',12,y); lbl('Banco / plataforma',85,y);
-    val(d.referencia||'—',12,y+5); val(d.banco||'—',85,y+5);
-    y+=13; hr(y); y+=7;
+    lbl('N° de referencia',12,y);lbl('Banco / plataforma',85,y);
+    val(d.referencia,12,y+5);val(d.banco,85,y+5);
+    y+=13;hr(y);y+=7;
   }
 
-  lbl('Estado del pago',12,y); y+=5;
-  const colMap={pagado:[58,105,34],pendiente:[186,117,23],parcial:[24,95,165]};
-  const bgMap={pagado:[234,243,222],pendiente:[250,238,218],parcial:[230,241,251]};
+  lbl('Estado del pago',12,y);y+=5;
+  const colM={pagado:[58,105,34],pendiente:[186,117,23],parcial:[24,95,165]};
+  const bgM={pagado:[234,243,222],pendiente:[250,238,218],parcial:[230,241,251]};
   const st=(d.status||'pagado').toLowerCase();
-  doc.setFillColor(...(bgMap[st]||[244,244,244]));
+  doc.setFillColor(...(bgM[st]||[244,244,244]));
   doc.roundedRect(12,y,35,8,2,2,'F');
-  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...(colMap[st]||[26,26,46]));
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...(colM[st]||[26,26,46]));
   doc.text(st.toUpperCase(),14,y+5.5);
   y+=14;
 
-  if(d.notas){hr(y);y+=6;lbl('Notas',12,y);y+=5;
+  if(d.notas){
+    hr(y);y+=6;lbl('Notas adicionales',12,y);y+=5;
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
     const nl=doc.splitTextToSize(d.notas,W-24);
-    doc.text(nl,12,y);y+=nl.length*4.5+4;
+    doc.text(nl,12,y);
   }
 
-  doc.setFillColor(...azul); doc.rect(0,H-14,W,14,'F');
+  doc.setFillColor(...azul);doc.rect(0,H-14,W,14,'F');
   doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(180,180,200);
   doc.text('Este documento es comprobante de pago por los servicios prestados.',W/2,H-8,{align:'center'});
   doc.text('VCH-'+(d.folio||'—')+' · '+(d.fecha||''),W/2,H-4,{align:'center'});
-
   doc.save('VCH-'+(d.folio||'XXX')+'-'+(d.cliente||'cliente').replace(/\s+/g,'-')+'.pdf');
 }
 
-// ── TOAST ─────────────────────────────────────────────────────────
-function toast(msg, type='info') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast '+type+' show';
-  setTimeout(()=>t.className='toast',3000);
+// ── TOAST ────────────────────────────────────────────────────────
+function toast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+type+' show';
+  setTimeout(()=>t.className='toast',3200);
 }
 </script>
 </body>
